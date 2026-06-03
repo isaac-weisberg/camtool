@@ -1858,7 +1858,7 @@ class CamTool2(object):
 
             elif action == "fov_m":
                 if self.data().interpolation["camera_fov"] == None:
-                    ctt.set_fov( max(0, ctt.get_fov() - 5) )
+                    ctt.set_fov( max(0, ctt.get_fov() - 0.25) )
                 else:
                     self.data().interpolation["camera_fov"] = ctt.convert_fov_2_focal_length( max(0, ctt.convert_fov_2_focal_length(self.data().interpolation["camera_fov"], True) - 0.5) )
 
@@ -1870,7 +1870,7 @@ class CamTool2(object):
 
             elif action == "fov_p":
                 if self.data().interpolation["camera_fov"] == None:
-                    ctt.set_fov( max(0, ctt.get_fov() + 5) )
+                    ctt.set_fov( max(0, ctt.get_fov() + 0.25) )
                 else:
                     self.data().interpolation["camera_fov"] = ctt.convert_fov_2_focal_length( max(0, ctt.convert_fov_2_focal_length(self.data().interpolation["camera_fov"], True) + 0.5) )
 
