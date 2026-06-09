@@ -568,6 +568,7 @@ class Data(object):
                     "tracking_offset" : None,
                     "camera_focus_point" : None,
                     "camera_fov" : None,
+                    "near_clip" : None,
                     "camera_shake_strength" : None,
                     "camera_offset_shake_strength" : None,
                     "spline_speed" : None,

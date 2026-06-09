@@ -686,8 +686,9 @@ class CamTool2(object):
             locUi["camera_use_tracking_point"] = Option( self.__app, "True", locUi["camera_focus_point"].get_next_pos_v(), locUi["camera_focus_point"].get_size(), True, False, "Autofocus" )
 
             locUi["camera_fov"] = Option(self.__app, "FOV", locUi["camera_focus_point"].get_next_pos_v() + vec(0, self.__margin.x + self.__btn_height), locUi["camera_focus_point"].get_size())
+            locUi["near_clip"] = Option(self.__app, "Near Clip", locUi["camera_fov"].get_next_pos_v() + vec(0, self.__margin.x), locUi["camera_focus_point"].get_size(), True)
             
-            locUi["camera_use_specific_cam"] = Option( self.__app, "Camtool",locUi["camera_fov"].get_next_pos_v() + vec(0, self.__margin.x + self.__btn_height), locUi["camera_focus_point"].get_size(), True, True, "Specific cam" )
+            locUi["camera_use_specific_cam"] = Option( self.__app, "Camtool", locUi["near_clip"].get_next_pos_v() + vec(0, self.__margin.x + self.__btn_height), locUi["camera_focus_point"].get_size(), True, True, "Specific cam" )
 
 
             locUi["lbl_shake"] = Label(self.__app, "Shake", locUi["camera_use_specific_cam"].get_next_pos_v() + vec(0, self.__margin.x), vec(self.__ui["options"]["info"]["width"], self.__btn_height))
@@ -716,6 +717,10 @@ class CamTool2(object):
             ac.addOnClickedListener(locUi["camera_fov"].get_btn_m(), camera__fov_m)
             ac.addOnClickedListener(locUi["camera_fov"].get_btn(), camera__fov)
             ac.addOnClickedListener(locUi["camera_fov"].get_btn_p(), camera__fov_p)
+
+            ac.addOnClickedListener(locUi["near_clip"].get_btn_m(), camera__near_clip_m)
+            ac.addOnClickedListener(locUi["near_clip"].get_btn(), camera__near_clip)
+            ac.addOnClickedListener(locUi["near_clip"].get_btn_p(), camera__near_clip_p)
             
             ac.addOnClickedListener(locUi["camera_use_specific_cam"].get_btn_m(), camera__use_specific_cam_m)
             ac.addOnClickedListener(locUi["camera_use_specific_cam"].get_btn_p(), camera__use_specific_cam_p)
@@ -907,6 +912,7 @@ class CamTool2(object):
 
             if  (   self.data().interpolation["camera_focus_point"] == None and
                     self.data().interpolation["camera_fov"] == None and
+                    self.data().interpolation["near_clip"] == None and
                     self.data().interpolation["camera_shake_strength"] == None and
                     self.data().interpolation["camera_offset_shake_strength"] == None):
                 self.__ui["menu"]["camera"].bold(False)
@@ -1311,6 +1317,13 @@ class CamTool2(object):
                 else:
                     self.__ui["options"]["camera"]["camera_fov"].set_text(math.radians(ctt.get_fov()), True, "degrees")
                     self.__ui["options"]["camera"]["camera_fov"].highlight(False)
+
+                if self.data().interpolation["near_clip"] != None:
+                    self.__ui["options"]["camera"]["near_clip"].set_text(self.data().interpolation["near_clip"], True, "m")
+                    self.__ui["options"]["camera"]["near_clip"].highlight(True)
+                else:
+                    self.__ui["options"]["camera"]["near_clip"].set_text(ctt.get_clipping_near(), True, "m")
+                    self.__ui["options"]["camera"]["near_clip"].highlight(False)
                 
                 if self.data("camera").camera_use_specific_cam == 0:
                     self.__ui["options"]["camera"]["camera_use_specific_cam"].set_text("Steering Wheel")
@@ -1601,6 +1614,9 @@ class CamTool2(object):
         elif key == "camera_fov":
             ctt.set_fov(ctt.get_fov() + 1 * multiplier)
             return True
+        
+        elif key == "near_clip":
+            ctt.set_clipping_near(ctt.get_clipping_near() + 1 * multiplier)
 
         elif key == "camera_focus_point":
             ctt.set_focus_point(ctt.get_focus_point() + 1 * multiplier)
@@ -1873,6 +1889,24 @@ class CamTool2(object):
                     ctt.set_fov( max(0, ctt.get_fov() + 0.25) )
                 else:
                     self.data().interpolation["camera_fov"] = ctt.convert_fov_2_focal_length( max(0, ctt.convert_fov_2_focal_length(self.data().interpolation["camera_fov"], True) + 0.5) )
+
+            elif action == "near_clip_m":
+                if self.data().interpolation["near_clip"] == None:
+                    ctt.set_clipping_near(ctt.get_clipping_near() - 0.05)
+                else:
+                    self.data().interpolation["near_clip"] = self.data().interpolation["near_clip"] - 0.05
+                    
+            elif action == "near_clip":
+                if self.data().interpolation["near_clip"] == None:
+                    self.data().interpolation["near_clip"] = ctt.get_clipping_near()
+                else:
+                    self.data().interpolation["near_clip"] = None
+
+            elif action == "near_clip_p":
+                if self.data().interpolation["near_clip"] == None:
+                    ctt.set_clipping_near(ctt.get_clipping_near() + 0.05)
+                else:
+                    self.data().interpolation["near_clip"] = self.data().interpolation["near_clip"] + 0.05
 
             elif action == "use_specific_cam_m":
                 self.__specific_cam_changed = True
@@ -2567,6 +2601,15 @@ def camera__use_specific_cam_m(*arg):
     gUI.refreshGuiOnly()
 def camera__use_specific_cam_p(*arg):
     gUI.on_click__camera("use_specific_cam_p")
+    gUI.refreshGuiOnly()
+def camera__near_clip_m(*arg):
+    gUI.on_click__camera("near_clip_m")
+    gUI.refreshGuiOnly()
+def camera__near_clip(*arg):
+    gUI.on_click__camera("near_clip")
+    gUI.refreshGuiOnly()
+def camera__near_clip_p(*arg):
+    gUI.on_click__camera("near_clip_p")
     gUI.refreshGuiOnly()
     
 

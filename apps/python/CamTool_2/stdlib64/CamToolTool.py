@@ -188,8 +188,8 @@ class CamToolTool(object):
         # self.near_clipping = min(2, max(0.1, (2 - (fov/50))))
         # self.set_clipping_near(self.near_clipping)
         # return self.__path.SetFOV(fov)
-        near_clipping = min(2, max(0.1, (2 - (fov/50))))
-        self.set_clipping_near(near_clipping)
+        # near_clipping = min(2, max(0.1, (2 - (fov/50))))
+        # self.set_clipping_near(near_clipping)
         return ac.ext_setCameraFov(fov)
 
     def get_dof_factor(self):
@@ -223,6 +223,9 @@ class CamToolTool(object):
         # self.__path.SetClippingNear.restype = ctypes.c_bool
         # return self.__path.SetClippingNear(clipping)
         return ac.ext_setCameraClipNear(clipping)
+    
+    def get_clipping_near(self):
+        return ac.ext_getCameraClipNear()
 
     def set_clipping_far(self, clipping):
         # self.__path.SetClippingFar.argtypes = [ctypes.c_float]
