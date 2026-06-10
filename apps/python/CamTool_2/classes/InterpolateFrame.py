@@ -409,7 +409,15 @@ class InterpolateFrame(object):
             locFov = locFov * (1 - locSt_fov_mix) + locSt_fov * locSt_fov_mix
         ctt.set_fov(locFov * (1 - strength_inv) + ctt.get_fov() * strength_inv )
 
+        #===============================================================
+        #CAMERA
+        #near_clip
 
+        locNearClip = interpolation.interpolate_sin( the_x_tmp, locX, locY["near_clip"] )
+        if locNearClip == None:
+            locNearClip = ctt.get_clipping_near()
+        
+        ctt.set_clipping_near(locNearClip)
 
         #---------------------------------------------------------------
         #focus point
